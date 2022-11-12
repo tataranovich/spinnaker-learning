@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    traffic.spinnaker.io/load-balancers: '["service sampleapp-service"]'
+  labels:
+    app: sampleapp
+  name: sampleapp-frontend
+  namespace: sampleapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sampleapp
+  template:
+    metadata:
+      labels:
+        app: sampleapp
+    spec:
+      containers:
+        - image: gcr.io/${PROJECT_ID}/sampleapp
+          name: sampleapp

@@ -1,0 +1,23 @@
+---
+steps:
+  - id: Build image
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/sampleapp:$SHORT_SHA', '.']
+
+  - id: Update manifests
+    name: 'dibi/envsubst'
+    entrypoint: 'sh'
+    env: [ 'PROJECT_ID=$PROJECT_ID' ]
+    args:
+    - '-c'
+    - |
+      envsubst < manifests/replicaset_yaml.template > manifests/replicaset.yaml
+      rm manifests/replicaset_yaml.template
+
+images:
+  - 'gcr.io/$PROJECT_ID/sampleapp:$SHORT_SHA'
+
+artifacts:
+  objects:
+    location: gs://$PROJECT_ID-artifacts/sampleapp-manifests/$SHORT_SHA
+    paths: [ 'manifests/*' ]
