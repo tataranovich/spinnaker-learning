@@ -1,0 +1,165 @@
+{
+  "appConfig": {},
+  "expectedArtifacts": [
+    {
+      "defaultArtifact": {
+        "customKind": true,
+        "id": "edce61af-d7d0-4f29-9d81-7ccf0247064d"
+      },
+      "displayName": "sampleapp-manifest",
+      "id": "1af35348-597e-4ee0-835a-523bdc107557",
+      "matchArtifact": {
+        "artifactAccount": "cloudguru-gcs",
+        "id": "b5f3a4f3-2952-4ba3-a197-e333a99cad93",
+        "name": "gs://playground-s-11-a9ad0138-artifacts/sampleapp-manifests/.*/namespace.yaml",
+        "type": "gcs/object"
+      },
+      "useDefaultArtifact": false,
+      "usePriorArtifact": true
+    },
+    {
+      "defaultArtifact": {
+        "customKind": true,
+        "id": "3bd5f77b-a73f-4884-abcd-92ae6d70e5ca"
+      },
+      "displayName": "sampleapp-service",
+      "id": "c154a40f-1f3e-4ae9-9f90-983efd492622",
+      "matchArtifact": {
+        "artifactAccount": "cloudguru-gcs",
+        "id": "b3f8ac4f-a544-4d3b-8f25-25046db62fc4",
+        "name": "gs://playground-s-11-a9ad0138-artifacts/sampleapp-manifests/.*/service.yaml",
+        "type": "gcs/object"
+      },
+      "useDefaultArtifact": false,
+      "usePriorArtifact": true
+    },
+    {
+      "defaultArtifact": {
+        "customKind": true,
+        "id": "8e1c1e9c-cf78-4fe3-9661-2387cdf88ad0"
+      },
+      "displayName": "sampleapp-replicaset",
+      "id": "774610f3-830e-49e5-bd7e-b4c7c7a8a11e",
+      "matchArtifact": {
+        "artifactAccount": "cloudguru-gcs",
+        "id": "d7025ebe-d218-4803-9b2f-73bbcbd13e2f",
+        "name": "gs://playground-s-11-a9ad0138-artifacts/sampleapp-manifests/.*/replicaset.yaml",
+        "type": "gcs/object"
+      },
+      "useDefaultArtifact": false,
+      "usePriorArtifact": true
+    },
+    {
+      "defaultArtifact": {
+        "customKind": true,
+        "id": "a7cf2640-1164-4fde-8d83-60c0531a211f"
+      },
+      "displayName": "sampleapp-image",
+      "id": "f3a770ae-5bba-4aae-ae58-76905eb2399f",
+      "matchArtifact": {
+        "artifactAccount": "docker-registry",
+        "id": "ef312221-71e5-4461-8f2b-32ea515e920b",
+        "name": "gcr.io/playground-s-11-a9ad0138/sampleapp",
+        "type": "docker/image"
+      },
+      "useDefaultArtifact": false,
+      "usePriorArtifact": true
+    }
+  ],
+  "keepWaitingPipelines": false,
+  "lastModifiedBy": "admin",
+  "limitConcurrent": true,
+  "schema": "1",
+  "spelEvaluator": "v4",
+  "stages": [
+    {
+      "account": "gke-cluster",
+      "cloudProvider": "kubernetes",
+      "manifestArtifactId": "1af35348-597e-4ee0-835a-523bdc107557",
+      "moniker": {
+        "app": "sampleapp"
+      },
+      "name": "Namespace",
+      "refId": "1",
+      "requisiteStageRefIds": [],
+      "skipExpressionEvaluation": false,
+      "source": "artifact",
+      "trafficManagement": {
+        "enabled": false,
+        "options": {
+          "enableTraffic": false
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "account": "gke-cluster",
+      "cloudProvider": "kubernetes",
+      "manifestArtifactId": "c154a40f-1f3e-4ae9-9f90-983efd492622",
+      "moniker": {
+        "app": "sampleapp"
+      },
+      "name": "Service",
+      "refId": "2",
+      "requisiteStageRefIds": [
+        "1"
+      ],
+      "skipExpressionEvaluation": false,
+      "source": "artifact",
+      "trafficManagement": {
+        "enabled": false,
+        "options": {
+          "enableTraffic": false
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "account": "gke-cluster",
+      "cloudProvider": "kubernetes",
+      "manifestArtifactId": "774610f3-830e-49e5-bd7e-b4c7c7a8a11e",
+      "moniker": {
+        "app": "sampleapp"
+      },
+      "name": "Deployment",
+      "refId": "3",
+      "requiredArtifactIds": [],
+      "requiredArtifacts": [],
+      "requisiteStageRefIds": [
+        "2"
+      ],
+      "skipExpressionEvaluation": false,
+      "source": "artifact",
+      "trafficManagement": {
+        "enabled": true,
+        "options": {
+          "enableTraffic": true,
+          "namespace": "sampleapp",
+          "services": [
+            "service sampleapp-service"
+          ],
+          "strategy": "highlander"
+        }
+      },
+      "type": "deployManifest"
+    }
+  ],
+  "triggers": [
+    {
+      "attributeConstraints": {
+        "status": "SUCCESS"
+      },
+      "enabled": true,
+      "expectedArtifactIds": [
+        "1af35348-597e-4ee0-835a-523bdc107557",
+        "c154a40f-1f3e-4ae9-9f90-983efd492622",
+        "774610f3-830e-49e5-bd7e-b4c7c7a8a11e",
+        "f3a770ae-5bba-4aae-ae58-76905eb2399f"
+      ],
+      "payloadConstraints": {},
+      "pubsubSystem": "google",
+      "subscriptionName": "cloudguru-gcb",
+      "type": "pubsub"
+    }
+  ]
+}
